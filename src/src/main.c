@@ -36,6 +36,9 @@ int main(void)
   scanf("%d", &client_opt);
   printf("Digite o ip do servidor: \n");
   scanf("%s", ip_server);
+  // printf("Digite o ip do client: \n");
+  // scanf("%s", ip_client);
+
   // Servidor
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = inet_addr(ip_server);
