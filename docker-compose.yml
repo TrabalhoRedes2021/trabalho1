@@ -3,9 +3,6 @@ version: '3.0'
 networks:
   default:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.1.101/24
 
 services:
   server:
