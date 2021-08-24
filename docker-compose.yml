@@ -1,0 +1,18 @@
+version: '3.0'
+
+networks:
+  default:
+    driver: bridge
+
+
+services:
+  container_c:
+    container_name: "container_c"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - "./src/:/src/"
+    ports:
+      - "8080:8080"
+      - "8888:8888"
