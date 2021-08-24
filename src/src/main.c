@@ -47,7 +47,7 @@ int main(void)
   {
     char * send;
     while(1){
-      print("Send Message \n");
+      printf("Send Message \n");
       scanf("%s", send);
       sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &client_addr, len);
       printf("Message sent\n");
