@@ -3,11 +3,37 @@ version: '3.0'
 networks:
   default:
     driver: bridge
-
+    ipam:
+      config:
+        - subnet: 192.168.1.101/24
 
 services:
-  container_c:
-    container_name: "container_c"
+  server:
+    container_name: "server_c"
+    profiles:
+      - server
+    command: bash -c "./bin/main"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    environment:
+      CLIENT_OPT: ${CLIENT_OPT_SERVER}
+      IP_SERVER: ${IP_SERVER_SERVER}
+      IP_CLIENT: ${IP_CLIENT_SERVER}
+      MESSAGE: ${MESSAGE_SERVER}
+    volumes:
+      - "./src/:/src/"
+    ports:
+      - "8080:8080"
+      - "8888:8888"
+    networks:
+      - default
+
+  client:
+    container_name: "client_c"
+    profiles:
+      - client
+    command: bash -c "./bin/main"
     build:
       context: .
       dockerfile: ./docker/Dockerfile
@@ -16,3 +42,10 @@ services:
     ports:
       - "8080:8080"
       - "8888:8888"
+    environment:
+      CLIENT_OPT: ${CLIENT_OPT_CLIENT}
+      IP_SERVER: ${IP_SERVER_CLIENT}
+      IP_CLIENT: ${IP_CLIENT_CLIENT}
+      MESSAGE: ${MESSAGE_CLIENT}
+    networks:
+      - default

@@ -13,7 +13,7 @@
 
 int main(void)
 {
-  char ip_server[12], ip_client[12];
+  char * ip_server, * ip_client;
   int client_opt;
   int sockfd;
   char msg[MAX_BUFFER];
@@ -30,11 +30,10 @@ int main(void)
   // Zerando area de memorio dos endereços para evitar lixo
   memset(&serv_addr, 0, sizeof(serv_addr));
   memset(&client_addr, 0, sizeof(client_addr));
+  client_opt = atoi(getenv("CLIENT_OPT"));
+  ip_server = getenv("IP_SERVER");
+  ip_client = getenv("IP_CLIENT");
   // Setando informações do servidor
-  printf("Digite se é servidor ou cliente:\n1: servidor.\n2: client.\n");
-  scanf("%d", &client_opt);
-  printf("Digite o ip do servidor: \n");
-  scanf("%s", ip_server);
   // printf("Digite o ip do client: \n");
   // scanf("%s", ip_client);
 
@@ -46,8 +45,8 @@ int main(void)
   if(client_opt==2)
   {
     client_addr.sin_family = AF_INET;
-    client_addr.sin_addr.s_addr = htons(INADDR_ANY);
-    client_addr.sin_port = htons(0);
+    client_addr.sin_addr.s_addr = inet_addr(ip_client);
+    client_addr.sin_port = htons(CLIENT_PORT);
   }
  // Conectando com o endenreço do servidor 
  if(client_opt == 1)
@@ -70,12 +69,13 @@ int main(void)
   pid = fork();
   if(pid == 0)
   {
-    char send[MAX_BUFFER];
+    char * send;
     while(1){
       printf("Send Message \n");
-      scanf("%s", send);
+      send = getenv("MESSAGE");
       sendto(sockfd, send, strlen(send), 0, (const struct sockaddr *) &serv_addr, sizeof(serv_addr));
       printf("Message sent\n");
+      sleep(3);
       if(!strcmp(send, "stop"))
       {
         break;
@@ -87,11 +87,12 @@ int main(void)
   }
  }
   if(client_opt == 1){
+    printf("Client server ready to receive!\nIP: %s\tPORT: %d", ip_server, SERVER_PORT);
     while(1){
       memset(msg, 0x0, MAX_BUFFER);
       len = sizeof(client_addr); 
-      n = recvfrom(sockfd, msg, MAX_BUFFER, 0, (struct sockaddr *) &client_addr, &len);
-      printf("Client: %s\n", msg);
+      n = recvfrom(sockfd, msg, MAX_BUFFER, 0, (struct sockaddr *) &client_addr, (unsigned int *)&len);
+      printf("Client SENT: %s\n", msg);
       if(!strcmp(msg, "stop"))
       {
         break;

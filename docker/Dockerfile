@@ -5,6 +5,7 @@ WORKDIR /src/
 RUN apt-get update -y
 RUN apt-get install -y curl \
      gcc \
-     libpthread-stubs0-dev
+     libpthread-stubs0-dev \
+     net-tools
 
 COPY ./src/ /src/
