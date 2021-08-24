@@ -63,7 +63,8 @@ int main(void)
       exit(EXIT_FAILURE);
     }
  }
-
+ if(client_opt == 2)
+ {
   pid = fork();
   if(pid == 0)
   {
@@ -71,13 +72,7 @@ int main(void)
     while(1){
       printf("Send Message \n");
       scanf("%s", send);
-      if(client_opt == 2)
-      {
-        sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &serv_addr, len);
-      }
-      else{
-        sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &client_addr, len);
-      }
+      sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &serv_addr, len);
       printf("Message sent\n");
       if(!strcmp(send, "stop"))
       {
@@ -85,8 +80,10 @@ int main(void)
       }
 
     }
+    exit(0);
 
   }
+ }
   if(client_opt == 1){
     while(1){
       len = sizeof(client_addr); 
