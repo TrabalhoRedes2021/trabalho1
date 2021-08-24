@@ -15,9 +15,10 @@ int main(void)
 {
   char ip_server[12], ip_client[12];
   int port;
+  int client_opt;
   int sockfd;
   char msg[MAX_BUFFER];
-  int len, n;
+  int len, n, status;
   pid_t pid;
   struct sockaddr_in serv_addr, client_addr;
 
@@ -31,17 +32,35 @@ int main(void)
   memset(&serv_addr, 0, sizeof(serv_addr));
   memset(&client_addr, 0, sizeof(client_addr));
   // Setando informações do servidor
+  printf("Digite se é servidor ou cliente:\n1: servidor.\n2: client.\n");
+  scanf("%d", &client_opt);
   printf("Digite o ip do servidor: \n");
   scanf("%s", ip_server);
+  // Servidor
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = inet_addr(ip_server);
   serv_addr.sin_port = htons(SERVER_PORT);
+  //Client
+  client_addr.sin_family = AF_INET;
+  client_addr.sin_addr.s_addr = htons(INADDR_ANY);
+  client_addr.sin_port = htons(CLIENT_PORT);
  // Conectando com o endenreço do servidor 
-  if(bind(sockfd, (const struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-  {
-    perror("bind failed");
-    exit(EXIT_FAILURE);
-  }
+ if(client_opt == 1)
+ {
+    if(bind(sockfd, (const struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+      perror("bind failed");
+      exit(EXIT_FAILURE);
+    }
+ }
+ else{
+  if(bind(sockfd, (const struct sockaddr *)&client_addr, sizeof(client_addr)) < 0)
+    {
+      perror("bind failed");
+      exit(EXIT_FAILURE);
+    }
+ }
+
   pid = fork();
   if(pid == 0)
   {
@@ -49,7 +68,13 @@ int main(void)
     while(1){
       printf("Send Message \n");
       scanf("%s", send);
-      sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &client_addr, len);
+      if(client_opt == 2)
+      {
+        sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &serv_addr, len);
+      }
+      else{
+        sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &client_addr, len);
+      }
       printf("Message sent\n");
       if(!strcmp(send, "stop"))
       {
@@ -59,15 +84,21 @@ int main(void)
     }
 
   }
-  while(1){
-    len = sizeof(client_addr); 
-    n = recvfrom(sockfd, (char *)msg, MAX_BUFFER, MSG_WAITALL, (struct sockaddr *) &client_addr, &len);
-    msg[n] = '\0';
-    printf("Client: %s\n", msg);
-    if(!strcmp(msg, "stop"))
-    {
-      break;
+  if(client_opt == 1){
+    while(1){
+      len = sizeof(client_addr); 
+      n = recvfrom(sockfd, (char *)msg, MAX_BUFFER, MSG_WAITALL, (struct sockaddr *) &client_addr, &len);
+      msg[n] = '\0';
+      printf("Client: %s\n", msg);
+      if(!strcmp(msg, "stop"))
+      {
+        break;
+      }
     }
+  }
+  else
+  {
+    waitpid(pid, &status, 0);
   }
 
   return 0;
