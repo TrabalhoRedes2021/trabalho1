@@ -14,7 +14,6 @@
 int main(void)
 {
   char ip_server[12], ip_client[12];
-  int port;
   int client_opt;
   int sockfd;
   char msg[MAX_BUFFER];
@@ -48,7 +47,7 @@ int main(void)
   {
     client_addr.sin_family = AF_INET;
     client_addr.sin_addr.s_addr = htons(INADDR_ANY);
-    client_addr.sin_port = htons(CLIENT_PORT);
+    client_addr.sin_port = htons(0);
   }
  // Conectando com o endenreço do servidor 
  if(client_opt == 1)
@@ -75,7 +74,7 @@ int main(void)
     while(1){
       printf("Send Message \n");
       scanf("%s", send);
-      sendto(sockfd, (char *) send, strlen(send), MSG_CONFIRM, (const struct sockaddr *) &serv_addr, len);
+      sendto(sockfd, send, strlen(send), 0, (const struct sockaddr *) &serv_addr, sizeof(serv_addr));
       printf("Message sent\n");
       if(!strcmp(send, "stop"))
       {
@@ -89,9 +88,9 @@ int main(void)
  }
   if(client_opt == 1){
     while(1){
+      memset(msg, 0x0, MAX_BUFFER);
       len = sizeof(client_addr); 
-      n = recvfrom(sockfd, (char *)msg, MAX_BUFFER, MSG_WAITALL, (struct sockaddr *) &client_addr, &len);
-      msg[n] = '\0';
+      n = recvfrom(sockfd, msg, MAX_BUFFER, 0, (struct sockaddr *) &client_addr, &len);
       printf("Client: %s\n", msg);
       if(!strcmp(msg, "stop"))
       {
