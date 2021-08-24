@@ -44,9 +44,12 @@ int main(void)
   serv_addr.sin_addr.s_addr = inet_addr(ip_server);
   serv_addr.sin_port = htons(SERVER_PORT);
   //Client
-  client_addr.sin_family = AF_INET;
-  client_addr.sin_addr.s_addr = htons(INADDR_ANY);
-  client_addr.sin_port = htons(CLIENT_PORT);
+  if(client_opt==2)
+  {
+    client_addr.sin_family = AF_INET;
+    client_addr.sin_addr.s_addr = htons(INADDR_ANY);
+    client_addr.sin_port = htons(CLIENT_PORT);
+  }
  // Conectando com o endenreço do servidor 
  if(client_opt == 1)
  {
@@ -68,7 +71,7 @@ int main(void)
   pid = fork();
   if(pid == 0)
   {
-    char * send;
+    char send[MAX_BUFFER];
     while(1){
       printf("Send Message \n");
       scanf("%s", send);
