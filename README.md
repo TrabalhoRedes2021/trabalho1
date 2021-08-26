@@ -10,8 +10,15 @@ make all
 ## Para executar
 
 ~~~BASH
-make run OPT="1" IP_SERVER="192.168.1.100" IP_CLIENT="192.168.1.7" MESSAGE="oii"
+make run IP_SERVER="192.168.1.100" PORT_SERVER="8000" PORT_SERVER2="8888" IP_CLIENT="192.168.1.7" PORT_CLIENT="5000" MESSAGE="SOU VICTOR"
 ~~~
 
-OPT 1: SERVER
-OPT 2: CLIENT
+IP_SERVER: IP da máquina 1
+
+PORT_SERVER: Porta do servidor que vai receber
+PORT_SERVER2: Porta que vai ser o cliente na máquina 1
+
+IP_CLIENT: IP da máquina 2
+PORT_CLIENT: Porta que vai se conectar para enviar messagens
+
+MESSAGE: Messagem para ser enviada 
