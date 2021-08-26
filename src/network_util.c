@@ -65,7 +65,7 @@ void create_server(char * ip, int port, int bufferLen)
    perror("Bind failed\n");
    exit(EXIT_FAILURE); 
   }
-  printf("Client server ready to receive!\nIP: %s\tPORT: %d", ip, port);
+  printf("Client server ready to receive!\nIP: %s\tPORT: %d\n", ip, port);
   while(1)
   {
     stop = receive_message(sd, server, bufferLen);
