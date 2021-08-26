@@ -23,4 +23,4 @@ clean:
 
 run:
 	chmod +x $(EXE)
-	$(EXE) $(OPT) $(IP_SERVER) $(IP_CLIENT) $(MESSAGE)
+	$(EXE) $(IP_SERVER) $(PORT_SERVER) $(IP_CLIENT) $(PORT_CLIENT) $(MESSAGE)
