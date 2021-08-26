@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   pid_t pid = fork();
   if(pid == 0)
   {
-    create_client(ip_client, port_client, ip_server, port_server, message);
+    create_client(ip_server, port_server, ip_client, port_client, message);
   }
   create_server(ip_server, port_server, MAX_BUFFER);
   return 0; 

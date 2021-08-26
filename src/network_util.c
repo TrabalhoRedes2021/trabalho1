@@ -81,6 +81,7 @@ void create_client(char * ip, int port, char * ip_server, int port_server, char 
   int sd = open_socket();
   struct sockaddr_in client = format_addr(ip, port);
   struct sockaddr_in server = format_addr(ip_server, port_server);
+  printf("BIND IP: %s\tPORT: %d\nSERVER IP: %s\tPORT: %d\n", ip, port, ip_server, port_server);
   if(bind(sd, (const struct sockaddr *)&client, sizeof(client)) < 0)
   {
    perror("Bind failed\n");
