@@ -11,7 +11,7 @@
 #define CLIENT_PORT 8080
 #define SERVER_PORT 8888
 
-int main(void)
+int main(int argc, char *argv[])
 {
   char * ip_server, * ip_client;
   int client_opt;
@@ -30,9 +30,9 @@ int main(void)
   // Zerando area de memorio dos endereços para evitar lixo
   memset(&serv_addr, 0, sizeof(serv_addr));
   memset(&client_addr, 0, sizeof(client_addr));
-  client_opt = atoi(getenv("CLIENT_OPT"));
-  ip_server = getenv("IP_SERVER");
-  ip_client = getenv("IP_CLIENT");
+  client_opt = atoi(argv[1]);
+  ip_server = argv[2];
+  ip_client = argv[3];
   // Setando informações do servidor
   // printf("Digite o ip do client: \n");
   // scanf("%s", ip_client);
@@ -72,7 +72,7 @@ int main(void)
     char * send;
     while(1){
       printf("Send Message \n");
-      send = getenv("MESSAGE");
+      send = argv[4];
       sendto(sockfd, send, strlen(send), 0, (const struct sockaddr *) &serv_addr, sizeof(serv_addr));
       printf("Message sent\n");
       sleep(3);
@@ -92,7 +92,7 @@ int main(void)
       memset(msg, 0x0, MAX_BUFFER);
       len = sizeof(client_addr); 
       n = recvfrom(sockfd, msg, MAX_BUFFER, 0, (struct sockaddr *) &client_addr, (unsigned int *)&len);
-      printf("Client SENT: %s\n", msg);
+      printf("Client SENT: %s\tLEN: %d\n", msg, n);
       if(!strcmp(msg, "stop"))
       {
         break;
