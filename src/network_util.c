@@ -9,9 +9,12 @@
 #include <sys/wait.h>
 #include "network_util.h"
 
+int newBufferLen = 0;
+
 void send_message(int sd, struct sockaddr_in endClient, char * message)
 {
   printf("Enviando message\n");
+  scanf("%s", message);
   sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
 }
 
@@ -26,6 +29,17 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   memset(buffer, 0x0, bufferLen);
   lenMessage = recvfrom(sd, buffer, bufferLen, 0, (struct sockaddr *)&endClient, (unsigned int *)&len);
   printf("Client send: %s\tLEN: %d\n", buffer, lenMessage);
+  
+  printf("Tamanho do buffer antes:%d\n", newBufferLen);
+
+  if(strstr(buffer, "len"))
+  {
+    char *ptr = strtok(buffer, ":");
+    ptr = strtok(NULL, ":");
+    newBufferLen = atoi(ptr);
+    printf("Tamanho do buffer depois: %d\n", newBufferLen);
+  }
+
   if(!strcmp(buffer, "stop"))
   {
     stop = 1;
@@ -66,9 +80,12 @@ void create_server(char * ip, int port, int bufferLen)
    exit(EXIT_FAILURE); 
   }
   printf("Client server ready to receive!\nIP: %s\tPORT: %d\n", ip, port);
+
+  newBufferLen = bufferLen;
+
   while(1)
   {
-    stop = receive_message(sd, server, bufferLen);
+    stop = receive_message(sd, server, newBufferLen);
     if(stop == 1)
     {
       break;
