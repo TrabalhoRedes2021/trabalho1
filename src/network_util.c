@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/wait.h>
+#include "queue_utils.h"
 #include "network_util.h"
 
 int newBufferLen = 0;
@@ -14,8 +15,7 @@ int newBufferLen = 0;
 void send_message(int sd, struct sockaddr_in endClient, char * message)
 {
   printf("Enviando message\n");
-  scanf("%s", message);
-  sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
+    sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
 }
 
 int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
@@ -93,9 +93,10 @@ void create_server(char * ip, int port, int bufferLen)
   }
 }
 
-void create_client(char * ip, int port, char * ip_server, int port_server, char * message)
+void create_client(char * ip, int port, char * ip_server, int port_server, char * path)
 {
   int sd = open_socket();
+  int insert_true = 0;
   struct sockaddr_in client = format_addr(ip, port);
   struct sockaddr_in server = format_addr(ip_server, port_server);
   printf("BIND IP: %s\tPORT: %d\nSERVER IP: %s\tPORT: %d\n", ip, port, ip_server, port_server);
@@ -104,10 +105,15 @@ void create_client(char * ip, int port, char * ip_server, int port_server, char 
    perror("Bind failed\n");
    exit(EXIT_FAILURE); 
   }
-  while(1)
+  printf("Message\n");
+  TNode * ptr_init = NULL;
+  TNode * ptr_temp = ptr_init;
+  printf("Vetor pronto\n");
+  for(ptr_temp=ptr_init; ptr_temp != NULL; ptr_temp=ptr_temp->next)
   {
-    send_message(sd, server, message);
-    if(!strcmp(message, "stop"))
+    printf("%d %s\n", ptr_temp->id, ptr_temp->buffer);
+    send_message(sd, server, ptr_init->buffer);
+    if(!strcmp(ptr_init->buffer, "stop"))
     {
       break;
     }
