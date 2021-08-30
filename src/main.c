@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
   {
     create_client(ip_server, port_server2, ip_client, port_client);
   }
-  create_server(ip_server, port_server, MAX_BUFFER);
+  else{
+    create_server(ip_server, port_server, MAX_BUFFER);
+  }
   return 0; 
 }
