@@ -32,10 +32,9 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   lenMessage = recvfrom(sd, buffer, bufferLen, 0, (struct sockaddr *)&endClient, (unsigned int *)&len);
   printf("Client send: %s\tLEN: %d\n", buffer, lenMessage);
   
-  printf("Tamanho do buffer antes:%d\n", newBufferLen);
-
   if(strstr(buffer, "len"))
   {
+    printf("Tamanho do buffer antes:%d\n", newBufferLen);
     char *ptr = strtok(buffer, ":");
     ptr = strtok(NULL, ":");
     newBufferLen = atoi(ptr);
@@ -48,14 +47,18 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   }
   if(!strcmp(buffer, "print"))
   {
+    FILE * f2 = fopen("./src/recebido.png", "wb");
     TNode * temp;
     for(temp=ptr_init; temp != NULL; temp=temp->next)
     {
-      printf("%d -> %s\n", temp->id, temp->buffer); 
+      printf("%d -> %s\n", temp->id, temp->buffer);
+      fwrite(temp->buffer, sizeof(char), lenMessage, f2);
     }
+    fclose(f2);
   }
   else
   {
+   printf("Adicionando a fila\n");
    insert(idx, buffer, &ptr_init);
    idx += 1;
   }
@@ -108,7 +111,7 @@ void create_server(char * ip, int port, int bufferLen)
   }
 }
 
-void create_client(char * ip, int port, char * ip_server, int port_server)
+void create_client(char * ip, int port, char * ip_server, int port_server, int bufferLen)
 {
   int sd = open_socket();
   struct sockaddr_in client = format_addr(ip, port);
@@ -116,6 +119,7 @@ void create_client(char * ip, int port, char * ip_server, int port_server)
   FILE * f = fopen("./src/teste.png", "rb");
   size_t bytes;
   char * buffer = (char *)malloc(newBufferLen * sizeof(char));
+  newBufferLen = bufferLen;
   printf("BIND IP: %s\tPORT: %d\nSERVER IP: %s\tPORT: %d\n", ip, port, ip_server, port_server);
   if(bind(sd, (const struct sockaddr *)&client, sizeof(client)) < 0)
   {
@@ -127,10 +131,10 @@ void create_client(char * ip, int port, char * ip_server, int port_server)
     perror("Erro no arquivo !\n");
     exit(1); 
   }
-  while((bytes = fread(buffer, sizeof(char), newBufferLen, f)))
+  printf("%d\n", newBufferLen);
+  while((bytes = fread(buffer, sizeof(unsigned char), newBufferLen, f)))
   {
     send_message(sd, server, buffer);
-    sleep(3);
   }
   send_message(sd, server, "print");
   free(buffer);
