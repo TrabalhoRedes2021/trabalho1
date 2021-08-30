@@ -14,12 +14,11 @@ Prof. Fernando W. Cruz 1°. Semestre de 2021
 
 O objetivo desse trabalho é a implementação de um pseudo-protocolo de enlace de dados (camada N1 pseudo-enlace, como ilustrado na figura abaixo) contendo diálogo ponto-a-ponto, stop-and-wait e não-orientado à conexão. Significa dizer que as entidades da camada N-1 não precisam estabelecer conexão previamente antes de enviar os dados (podem enviar os dados diretamente ao outro lado).
 
+![ft](https://github.com/TrabalhoRedes2021/trabalho1/blob/main/ft.jpg)
+
 ## Rodar o Projeto
 
-```sh
-$ sudo docker-compose up --build
-
-```
+Segue as informações no [README](https://github.com/TrabalhoRedes2021/trabalho1/blob/main/README.md) do projeto.
 
 ## Diário de atividade
 
