@@ -8,13 +8,15 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 #include "network_util.h"
+#include "queue.h"
 
 int newBufferLen = 0;
+TNode * ptr_init = NULL;
+int idx = 0;
 
 void send_message(int sd, struct sockaddr_in endClient, char * message)
 {
   printf("Enviando message\n");
-  scanf("%s", message);
   sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
 }
 
@@ -43,6 +45,19 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   if(!strcmp(buffer, "stop"))
   {
     stop = 1;
+  }
+  if(!strcmp(buffer, "print"))
+  {
+    TNode * temp;
+    for(temp=ptr_init; temp != NULL; temp=temp->next)
+    {
+      printf("%d -> %s\n", temp->id, temp->buffer); 
+    }
+  }
+  else
+  {
+   insert(idx, buffer, &ptr_init);
+   idx += 1;
   }
   free(buffer);
   return stop;
@@ -93,24 +108,30 @@ void create_server(char * ip, int port, int bufferLen)
   }
 }
 
-void create_client(char * ip, int port, char * ip_server, int port_server, char * message)
+void create_client(char * ip, int port, char * ip_server, int port_server)
 {
   int sd = open_socket();
   struct sockaddr_in client = format_addr(ip, port);
   struct sockaddr_in server = format_addr(ip_server, port_server);
+  FILE * f = fopen("./src/teste.png", "rb");
+  size_t bytes;
+  char * buffer = (char *)malloc(newBufferLen * sizeof(char));
   printf("BIND IP: %s\tPORT: %d\nSERVER IP: %s\tPORT: %d\n", ip, port, ip_server, port_server);
   if(bind(sd, (const struct sockaddr *)&client, sizeof(client)) < 0)
   {
    perror("Bind failed\n");
    exit(EXIT_FAILURE); 
   }
-  while(1)
+  if(f == NULL)
   {
-    send_message(sd, server, message);
-    if(!strcmp(message, "stop"))
-    {
-      break;
-    }
+    perror("Erro no arquivo !\n");
+    exit(1); 
+  }
+  while((bytes = fread(buffer, sizeof(char), newBufferLen, f)))
+  {
+    send_message(sd, server, buffer);
     sleep(3);
   }
+  send_message(sd, server, "print");
+  free(buffer);
 } 
