@@ -21,6 +21,4 @@ PORT_SERVER2: Porta que vai ser o cliente na máquina 1
 IP_CLIENT: IP da máquina 2
 PORT_CLIENT: Porta que vai se conectar para enviar messagens
 
-MESSAGE: Messagem para ser enviada 
-
 Mensagem para negociação: "len:tamanhodoBuffer"
