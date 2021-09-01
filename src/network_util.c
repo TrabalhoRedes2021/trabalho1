@@ -9,13 +9,16 @@
 #include <sys/wait.h>
 #include "queue_utils.h"
 #include "network_util.h"
+#include "queue.h"
 
 int newBufferLen = 0;
+TNode * ptr_init = NULL;
+int idx = 0;
 
 void send_message(int sd, struct sockaddr_in endClient, char * message)
 {
   printf("Enviando message\n");
-    sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
+  sendto(sd, message, strlen(message), 0, (const struct sockaddr *)&endClient, sizeof(endClient));
 }
 
 int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
@@ -30,10 +33,9 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   lenMessage = recvfrom(sd, buffer, bufferLen, 0, (struct sockaddr *)&endClient, (unsigned int *)&len);
   printf("Client send: %s\tLEN: %d\n", buffer, lenMessage);
   
-  printf("Tamanho do buffer antes:%d\n", newBufferLen);
-
   if(strstr(buffer, "len"))
   {
+    printf("Tamanho do buffer antes:%d\n", newBufferLen);
     char *ptr = strtok(buffer, ":");
     ptr = strtok(NULL, ":");
     newBufferLen = atoi(ptr);
@@ -43,6 +45,23 @@ int receive_message(int sd, struct sockaddr_in endClient, int bufferLen)
   if(!strcmp(buffer, "stop"))
   {
     stop = 1;
+  }
+  if(!strcmp(buffer, "print"))
+  {
+    FILE * f2 = fopen("./src/recebido.png", "wb");
+    TNode * temp;
+    for(temp=ptr_init; temp != NULL; temp=temp->next)
+    {
+      printf("%d -> %s\n", temp->id, temp->buffer);
+      fwrite(temp->buffer, sizeof(char), lenMessage, f2);
+    }
+    fclose(f2);
+  }
+  else
+  {
+   printf("Adicionando a fila\n");
+   insert(idx, buffer, &ptr_init);
+   idx += 1;
   }
   free(buffer);
   return stop;
@@ -93,30 +112,32 @@ void create_server(char * ip, int port, int bufferLen)
   }
 }
 
-void create_client(char * ip, int port, char * ip_server, int port_server, char * path)
+void create_client(char * ip, int port, char * ip_server, int port_server, int bufferLen)
 {
   int sd = open_socket();
   int insert_true = 0;
   struct sockaddr_in client = format_addr(ip, port);
   struct sockaddr_in server = format_addr(ip_server, port_server);
+  FILE * f = fopen("./src/teste.png", "rb");
+  size_t bytes;
+  char * buffer = (char *)malloc(newBufferLen * sizeof(char));
+  newBufferLen = bufferLen;
   printf("BIND IP: %s\tPORT: %d\nSERVER IP: %s\tPORT: %d\n", ip, port, ip_server, port_server);
   if(bind(sd, (const struct sockaddr *)&client, sizeof(client)) < 0)
   {
    perror("Bind failed\n");
    exit(EXIT_FAILURE); 
   }
-  printf("Message\n");
-  TNode * ptr_init = NULL;
-  TNode * ptr_temp = ptr_init;
-  printf("Vetor pronto\n");
-  for(ptr_temp=ptr_init; ptr_temp != NULL; ptr_temp=ptr_temp->next)
+  if(f == NULL)
   {
-    printf("%d %s\n", ptr_temp->id, ptr_temp->buffer);
-    send_message(sd, server, ptr_init->buffer);
-    if(!strcmp(ptr_init->buffer, "stop"))
-    {
-      break;
-    }
-    sleep(3);
+    perror("Erro no arquivo !\n");
+    exit(1); 
   }
+  printf("%d\n", newBufferLen);
+  while((bytes = fread(buffer, sizeof(unsigned char), newBufferLen, f)))
+  {
+    send_message(sd, server, buffer);
+  }
+  send_message(sd, server, "print");
+  free(buffer);
 } 
