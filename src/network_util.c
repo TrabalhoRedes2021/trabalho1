@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/wait.h>
+#include "queue_utils.h"
 #include "network_util.h"
 #include "queue.h"
 
@@ -114,6 +115,7 @@ void create_server(char * ip, int port, int bufferLen)
 void create_client(char * ip, int port, char * ip_server, int port_server, int bufferLen)
 {
   int sd = open_socket();
+  int insert_true = 0;
   struct sockaddr_in client = format_addr(ip, port);
   struct sockaddr_in server = format_addr(ip_server, port_server);
   FILE * f = fopen("./src/teste.png", "rb");

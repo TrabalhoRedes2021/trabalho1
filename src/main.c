@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 #include "network_util.h"
+#include "queue_utils.h"
 #define MAX_BUFFER 200
 
 
@@ -20,8 +21,7 @@ int main(int argc, char *argv[])
   port_server = atoi(argv[2]);
   port_server2 = atoi(argv[3]);
   ip_client = argv[4];
-  port_client = atoi(argv[5]);
-  
+  port_client = atoi(argv[5]);  
   pid_t pid = fork();
   if(pid == 0)
   {
