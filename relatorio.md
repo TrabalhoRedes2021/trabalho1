@@ -48,6 +48,9 @@ Mensagem para negociação: "len:tamanhodoBuffer"
 - 27 de agosto: Evolução do código de um duplex para o arquivo network_util.c
 - 29 de agosto: Criação da negociação entre as camadas N-1
 - 30 de agosto: Criação das camadas N por meio do arquivo queue_utils.c e aujustes para finalização do projeto.
+- 01 de setembro Criação da fila de arquivo csv.
+- 03 de setembro verificação do quadro.
+- 05 de setembro tentativa de ajuste de execução da camada de enlace e adaptação para funcionar como processos a parte 
 
 ## Funções ultilizadas
 
@@ -57,6 +60,14 @@ Mensagem para negociação: "len:tamanhodoBuffer"
 - memset: Define N bytes de S para C.
 - recvfrom: pega um struct sockaddr \*, que diz de onde os dados vieram e preencherá fromlen com o tamanho de struct sockaddr
 - socket: Cria um novo socket do tipo TYPE no domínio
-- free: Liberar um bloco alocado por `malloc '
+- free: Liberar um bloco alocado por `malloc`
+- mq_open: Abrir messageria
+- mq_send: Enviar messagem
+- mq_receive: Receber messagem
 
 ## Opinião sobre o experimento
+A maior dificuldade não foi entender como funciona a camada de enlace, foi a parte de simular o funcionamento entre elas,
+principalmente a parte de mensageria porque apesar de ser possível enviar uma struct via mensagem não conseguimos realizar
+isso portanto tivemos que fazer mais de uma mensagem para que seja feita a verificação. Por conta disso o programa não ficou
+100% a parte de invasão de memória do C também atrapalhou muito pois toda hora era invadido um buffer de uma parte do projeto.
+A parte das camadas de rede e do full duplex foi relativamente a parte mais fácil do trabalho. 

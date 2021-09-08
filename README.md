@@ -22,3 +22,13 @@ IP_CLIENT: IP da máquina 2
 PORT_CLIENT: Porta que vai se conectar para enviar messagens
 
 Mensagem para negociação: "len:tamanhodoBuffer"
+Mensagem para print(salvar arquivo): "print"
+Mensagem de parar a transmissão: "stop" e "exit"
+
+O arquivo de csv vai ser transmitido !
+
+Caso a primeira execução dê errado. Por favor tentar novamente !
+Por algum motivo a primeira execução sempre está dando errado e a segunda da certo !
+
+Camada de enlace verifica o tamanho do pacote;
+Para facilitar mesmo que não tenha feito a negociação tem um default de 200

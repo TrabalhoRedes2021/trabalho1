@@ -1,5 +1,5 @@
 CC = gcc
-LDFLAGS =  
+LDFLAGS = -lrt 
 BLDDIR = .
 INCDIR = $(BLDDIR)/inc
 SRCDIR = $(BLDDIR)/src
@@ -12,7 +12,7 @@ EXE = bin/main
 all: clean $(EXE) 
     
 $(EXE): $(OBJ) 
-	$(CC) $(LDFLAGS) $(OBJDIR)/*.o -o $@
+	$(CC)  $(OBJDIR)/*.o $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	@mkdir -p $(@D)

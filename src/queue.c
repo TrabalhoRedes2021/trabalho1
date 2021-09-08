@@ -10,7 +10,7 @@
 #include "queue.h"
 
 
-int insert(int id, const char * chunck, struct TNode **ptr_init)
+int insert(int id, const char * chunck,int len, struct TNode **ptr_init)
 {
   TNode * p;
   p = (TNode *) malloc(sizeof(TNode));
@@ -19,6 +19,7 @@ int insert(int id, const char * chunck, struct TNode **ptr_init)
     return 0;
   }
   p->id = id;
+  p->len = len;
   strcpy(p->buffer, chunck);
   p->next = NULL;
 
