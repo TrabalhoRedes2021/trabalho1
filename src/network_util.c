@@ -7,7 +7,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/wait.h>
-#include "queue_utils.h"
 #include "network_util.h"
 #include "queue.h"
 
